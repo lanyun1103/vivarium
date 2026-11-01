@@ -1,5 +1,6 @@
 import type { SessionDetail, SessionSummary } from "../api/types";
 import { currentStepLabel, formatRelative, harnessEmoji, liveStatus, statusEmoji } from "../lib/sessionUi";
+import { HandoffPanel } from "./HandoffPanel";
 import { FlowStrip, StepsTimeline } from "./FlowAndSteps";
 import { TranscriptReplay } from "./TranscriptReplay";
 
@@ -107,6 +108,7 @@ export function SessionDetailPanel({ detail, loading, onClose }: DetailProps) {
         <h3>Transcript</h3>
         <TranscriptReplay turns={detail.turns} />
       </section>
+      <HandoffPanel sessionId={s.session_id} defaultHarness={s.harness} />
     </aside>
   );
 }

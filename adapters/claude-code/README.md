@@ -15,10 +15,13 @@ Hooks **always exit 0** and **fail soft** if Vivarium is down — your Claude se
 
 ## Limitations (read before prod use)
 
-- **Not a full transcript**: we do not parse `transcript_path` JSONL yet. You get user prompts (UserPromptSubmit) and the latest assistant snippet per turn (Stop), not tool calls or intermediate messages.
+- **Transcript JSONL (M3.5)**: on **SessionEnd**, we best-effort parse `transcript_path` JSONL (`VIVARIUM_TRANSCRIPT_MAX_LINES`, default 400). May **duplicate** turns already sent via UserPromptSubmit/Stop.
+- **Partial coverage**: tool blocks become `[tool:name]` text; no full argument payloads. Missing file → hooks-only transcript.
 - **Stop hook skips** when `stop_hook_active` is true (continuations).
 - Requires **Node + tsx** from the Vivarium repo (`pnpm install` once at repo root).
-- Company laptops: use `.claude/settings.local.json` + gitignored `vivarium.env` for tokens — never commit secrets.
+- Set `VIVARIUM_SKIP_TRANSCRIPT=1` to disable JSONL ingest.
+
+Env: `VIVARIUM_TRANSCRIPT_MAX_LINES`, `VIVARIUM_SKIP_TRANSCRIPT`, `VIVARIUM_MAX_TURN_CHARS`.
 
 ## One-time: Vivarium server
 

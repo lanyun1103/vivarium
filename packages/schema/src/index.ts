@@ -123,6 +123,10 @@ export const handoffPackage = z.object({
   task: z.string().optional(),
   cwd_redacted: z.string().optional(),
   created_at: isoDateTime,
+  /** Last N turns included for PoC manual resume (optional). */
+  turns: z.array(transcriptTurn).optional(),
+  /** Plain-text block to paste into the target harness. */
+  resume_prompt: z.string().optional(),
 });
 
 export type HandoffPackage = z.infer<typeof handoffPackage>;

@@ -99,6 +99,67 @@ code {
   background: var(--v-accent-soft);
 }
 
+.btn-primary {
+  border: none;
+  background: var(--v-accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.handoff-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-top: 0.5rem;
+}
+
+.handoff-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--v-muted);
+  flex: 1;
+  min-width: 160px;
+}
+
+.handoff-input {
+  border: 1px solid var(--v-accent-soft);
+  border-radius: 8px;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.9rem;
+}
+
+.handoff-error {
+  color: #8a1f1f;
+  font-size: 0.85rem;
+}
+
+.handoff-pre {
+  background: #f8f6ff;
+  border: 1px solid var(--v-accent-soft);
+  border-radius: 8px;
+  padding: 0.65rem;
+  font-size: 0.75rem;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+.handoff-result h4 {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 0.8rem;
+  color: var(--v-muted);
+}
+
 .banner {
   padding: 0.75rem 1rem;
   border-radius: var(--v-radius-card);

@@ -4,7 +4,7 @@
 
 活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
 
-> **Status:** M3 — **Web console** with session/agent cards, steps timeline, and transcript replay (polls M1 API). See [roadmap](docs/roadmap.md).
+> **Status:** M3.5 — richer transcript ingest (Claude JSONL) + **handoff PoC** (API + web 换马). See [roadmap](docs/roadmap.md) · [handoff](docs/handoff.md).
 
 ## Why
 
@@ -67,7 +67,10 @@ Try it end-to-end:
 # Terminal A: pnpm dev:api
 # Terminal B: pnpm dev:web
 pnpm dry-run:claude   # posts fixture session → refresh UI
+pnpm smoke:handoff  # handoff package from dry-run session
 ```
+
+Handoff: [docs/handoff.md](docs/handoff.md) — web **换马 / Handoff** button or `POST /v1/sessions/:id/handoff`.
 
 Optional: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` on API; matching `VITE_VIVARIUM_TOKEN` on web (see [.env.example](.env.example) and [packages/web/.env.example](packages/web/.env.example)).
 

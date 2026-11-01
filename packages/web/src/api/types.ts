@@ -44,6 +44,30 @@ export type SessionDetail = {
   turns: TranscriptTurn[];
 };
 
+export type HandoffPackage = {
+  version: 1;
+  session_id: string;
+  agent_id: string;
+  from_harness: string;
+  to_harness: string;
+  transcript_ref: string;
+  task_digest: string;
+  task?: string;
+  cwd_redacted?: string;
+  created_at: string;
+  turns?: TranscriptTurn[];
+  resume_prompt?: string;
+};
+
+export type HandoffResponse = {
+  package: HandoffPackage;
+  resume: {
+    summary: string;
+    claude_code: string;
+    generic_curl: string;
+  };
+};
+
 export type SessionsResponse = {
   sessions: SessionSummary[];
   count: number;
