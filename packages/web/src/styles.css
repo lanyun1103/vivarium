@@ -1,0 +1,161 @@
+:root {
+  --bg: #f6f3ff;
+  --card: #ffffff;
+  --accent: #7c6cf6;
+  --accent-soft: #ebe8ff;
+  --text: #1f1633;
+  --muted: #6b6280;
+  --ok: #3cb371;
+  --radius: 16px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  gap: 1rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  border: 2px solid transparent;
+  box-shadow: 0 8px 24px rgba(31, 22, 51, 0.06);
+}
+
+.card--live {
+  border-color: var(--accent-soft);
+  box-shadow: 0 8px 28px rgba(124, 108, 246, 0.15);
+}
+
+.card__avatar {
+  font-size: 2rem;
+  line-height: 1;
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft);
+  border-radius: 12px;
+}
+
+.card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: #eee;
+  color: var(--muted);
+}
+
+.badge--ok {
+  background: rgba(60, 179, 113, 0.15);
+  color: var(--ok);
+}
+
+.card__meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.card__task {
+  margin: 0.6rem 0 0;
+  font-size: 0.95rem;
+}
+
+.card__flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.85rem;
+}
+
+.flow-step {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background: #f0eef5;
+  color: var(--muted);
+}
+
+.flow-step.done {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.flow-step.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.footer {
+  margin-top: 2.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+code {
+  font-size: 0.85em;
+  background: #eee;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}

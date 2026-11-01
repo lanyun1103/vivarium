@@ -1,0 +1,7 @@
+{
+  "agent.thinking": "./assets/thinking.svg",
+  "agent.success": "./assets/success.svg",
+  "agent.idle": "./assets/idle.svg",
+  "step.running": "./assets/step-running.svg",
+  "step.done": "./assets/step-done.svg"
+}
