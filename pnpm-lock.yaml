@@ -31,6 +31,44 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  adapters/grok-bot:
+    dependencies:
+      '@vivarium/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      '@vivarium/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.5
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  adapters/paseo:
+    dependencies:
+      '@vivarium/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      '@vivarium/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.5
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.15
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/api:
     dependencies:
       '@hono/node-server':

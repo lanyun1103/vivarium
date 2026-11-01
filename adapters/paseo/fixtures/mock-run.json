@@ -1,0 +1,15 @@
+{
+  "run_id": "paseo-mock-run-001",
+  "agent_id": "paseo:fixture",
+  "host": "localhost",
+  "status": "running",
+  "model": "paseo-mock",
+  "cwd": "~/demo",
+  "task": "Fixture run for ingest-run.ts",
+  "started_at": "2026-11-01T07:00:00Z",
+  "updated_at": "2026-11-01T07:01:00Z",
+  "dialogue": [
+    { "role": "user", "content": "Hello from mock Paseo run", "at": "2026-11-01T07:00:10Z" }
+  ],
+  "steps": [{ "id": "s1", "title": "Mock step", "status": "running" }]
+}

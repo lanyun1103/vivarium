@@ -11,6 +11,8 @@
     "smoke:api": "pnpm --filter @vivarium/api smoke",
     "smoke:api-restart": "bash scripts/smoke-api-restart.sh",
     "dry-run:claude": "pnpm --filter @vivarium/adapter-claude-code dry-run",
+    "dry-run:grok": "pnpm --filter @vivarium/adapter-grok-bot dry-run",
+    "dry-run:paseo": "pnpm --filter @vivarium/adapter-paseo dry-run",
     "smoke:claude": "bash scripts/smoke-claude-adapter.sh",
     "smoke:handoff": "bash scripts/smoke-handoff.sh"
   },

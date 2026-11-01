@@ -10,9 +10,9 @@ Milestone overview for Vivarium / 活体台. Scope is intentionally incremental;
 | **M3** | Web console | Agent/session cards, steps + transcript replay, polling UI, theme CSS vars ✅ |
 | **M3.5** | Transcript + handoff PoC | JSONL ingest (Claude Code), `POST …/handoff`, web 换马 button ✅ |
 | **M3.6** | Plugin host | Local skin/emoji packs, semantic keys, web skin picker ✅ |
-| **M4** | Live + adapters | WebSocket/SSE; Grok/Paseo adapter sketches |
-| **M5** | Transcript depth | Tool call chips, search; emoji plugin resolution |
-| **M6** | Handoff + adapters | Handoff CLI; Grok/Paseo sketches; OIDC, retention |
+| **M4** | Multi-harness adapters | Grok Bot CLI ingest, Paseo snapshot mapper + dry-run ✅ |
+| **M5** | Live + polish | WebSocket/SSE; OSS packaging docs |
+| **M6** | Handoff + ops | Handoff CLI hardening; OIDC, retention; TickTick (optional) |
 
 ## Non-goals (for now)
 
