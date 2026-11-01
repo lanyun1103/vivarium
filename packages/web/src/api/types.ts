@@ -1,6 +1,7 @@
 export type SessionSummary = {
   session_id: string;
   agent_id: string | null;
+  reported_agent_id: string | null;
   harness: string | null;
   model: string | null;
   task: string | null;
@@ -8,14 +9,71 @@ export type SessionSummary = {
   updated_at: string;
   ended_at: string | null;
   outcome: string | null;
+  route_confidence: number | null;
+  route_source: string | null;
+  route_reason: string | null;
+  agent_locked: boolean;
+};
+
+export type LinePolicy = {
+  id: string;
+  summary_style: "ops" | "product" | "inbox";
+  nudge_copy: string;
+  handoff_hint: string;
+  aliases: string[];
+  cwd_hints: string[];
 };
 
 export type AgentSummary = {
   agent_id: string;
-  harness: string | null;
-  last_session_id: string;
+  display_name: string;
+  line: string;
+  avatar: string | null;
+  archived: boolean;
+  description: string | null;
+  created_at: string;
   updated_at: string;
+  last_activity: string | null;
   session_count: number;
+  running_count: number;
+  last_session_id: string | null;
+  preview_tasks: string[];
+};
+
+export type AgentDetail = AgentSummary & {
+  policy: LinePolicy;
+};
+
+export type SuggestionKind = "reassign" | "nudge" | "summary" | "handoff";
+
+export type BrainSuggestion = {
+  kind: SuggestionKind;
+  agent_id: string;
+  session_id?: string;
+  target_agent_id?: string;
+  text: string;
+  confidence: number;
+};
+
+export type ProgressSummary = {
+  agent_id: string;
+  display_name: string;
+  text: string;
+  running: number;
+  ended: number;
+  total: number;
+  latest_tasks: string[];
+  latest_step: string | null;
+};
+
+export type BrainSuggestResponse = {
+  summary: ProgressSummary;
+  suggestions: BrainSuggestion[];
+};
+
+export type AgentDetailResponse = {
+  agent: AgentDetail;
+  sessions: SessionSummary[];
 };
 
 export type SessionStep = {

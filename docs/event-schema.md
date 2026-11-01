@@ -20,7 +20,7 @@ Marks the beginning of an Agent run.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `agent_id` | string | Stable id for UI card (e.g. repo + task slug) |
+| `agent_id` | string | Routing **hint**. A product-line slug (`tianyan`) is kept when it matches a real line. A harness id (`claude-code:dry-run`) is stored as `reported_agent_id`; the session is routed separately. Prefer `#天眼` / `#company` in `task` when the hint is not a line. |
 | `harness` | string | e.g. `claude-code`, `grok-bot` |
 | `model` | string | Model id if known |
 | `cwd` | string | Working directory (prefer relative or redacted) |

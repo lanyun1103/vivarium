@@ -27,7 +27,7 @@ pnpm dry-run:grok
 pnpm dry-run:paseo
 ```
 
-Open http://127.0.0.1:5173 — three harnesses with distinct cards/transcripts.
+Open http://127.0.0.1:5173. The home is **product lines**, not a flat session dump. Dry-run fixtures use harness-scoped ids (`claude-code:dry-run`, …) and land in **待分拣** unless the task contains a line tag such as `#天眼`. Set `VIVARIUM_AGENT_ID=tianyan` when the adapter should name a real line. Routing: [routing.md](./routing.md).
 
 ## Claude Code
 

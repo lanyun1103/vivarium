@@ -24,6 +24,7 @@ pnpm validate          # plugin manifests
 pnpm dry-run:claude
 pnpm dry-run:grok
 pnpm dry-run:paseo
+pnpm test
 pnpm smoke:api
 pnpm smoke:handoff
 ```

@@ -4,7 +4,7 @@
   "description": "Vivarium / 活体台 — harness-agnostic Agent lifecycle and chat observability",
   "scripts": {
     "build": "pnpm -r run build",
-    "typecheck": "pnpm --filter @vivarium/schema build && pnpm -r run typecheck",
+    "typecheck": "pnpm --filter @vivarium/schema build && pnpm --filter @vivarium/sdk build && pnpm -r run typecheck",
     "dev:api": "pnpm --filter @vivarium/api dev",
     "dev:web": "pnpm --filter @vivarium/web dev",
     "validate": "pnpm --filter @vivarium/schema build && node --import tsx scripts/validate-plugins.ts",
@@ -14,7 +14,8 @@
     "dry-run:grok": "pnpm --filter @vivarium/adapter-grok-bot dry-run",
     "dry-run:paseo": "pnpm --filter @vivarium/adapter-paseo dry-run",
     "smoke:claude": "bash scripts/smoke-claude-adapter.sh",
-    "smoke:handoff": "bash scripts/smoke-handoff.sh"
+    "smoke:handoff": "bash scripts/smoke-handoff.sh",
+    "test": "pnpm --filter @vivarium/api test"
   },
   "engines": {
     "node": ">=20"

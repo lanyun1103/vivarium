@@ -1,10 +1,11 @@
 import { serve } from "@hono/node-server";
 import { join } from "node:path";
 import { createApp } from "./app.js";
+import { createLightModelFromEnv } from "./router.js";
 import { openStore } from "./store.js";
 
 const dbPath = process.env.VIVARIUM_DB_PATH ?? join(process.cwd(), "data", "vivarium.db");
-const store = openStore(dbPath);
+const store = openStore(dbPath, { classifier: createLightModelFromEnv() });
 const app = createApp(store);
 
 const port = Number(process.env.PORT ?? 8787);
