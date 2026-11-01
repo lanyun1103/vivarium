@@ -7,10 +7,10 @@ Milestone overview for Vivarium / 活体台. Scope is intentionally incremental;
 | **M0** | Skeleton | Monorepo, schema, SDK stub, API stub, web shell, docs, example adapter + plugin ✅ |
 | **M1** | Persistence | SQLite storage, query APIs, smoke tests, [D1 mapping doc](./storage.md) ✅ |
 | **M2** | Claude Code adapter | Installable SessionStart/End + turn hooks, dry-run, smoke, fail-soft ✅ |
-| **M3** | Live cards | WebSocket or SSE; running state, current step, log tail; plugin theme loader |
-| **M4** | Transcript replay | Turn timeline, tool call chips, search; emoji plugin resolution |
-| **M5** | Handoff | Server-side transcript_ref, export/import package, CLI to resume on second harness |
-| **M6** | Adapters + hardening | Grok/Paseo sketches; OIDC, retention, signed plugins |
+| **M3** | Web console | Agent/session cards, steps + transcript replay, polling UI, theme CSS vars ✅ |
+| **M4** | Live + plugins | WebSocket/SSE live tail; example-skin loader in web |
+| **M5** | Transcript depth | Tool call chips, search; emoji plugin resolution |
+| **M6** | Handoff + adapters | Handoff CLI; Grok/Paseo sketches; OIDC, retention |
 
 ## Non-goals (for now)
 

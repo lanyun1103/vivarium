@@ -4,7 +4,7 @@
 
 活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
 
-> **Status:** M2 — **Claude Code hooks PoC** report `session.start` / turns / `session.end` into SQLite; web UI still a placeholder. See [roadmap](docs/roadmap.md).
+> **Status:** M3 — **Web console** with session/agent cards, steps timeline, and transcript replay (polls M1 API). See [roadmap](docs/roadmap.md).
 
 ## Why
 
@@ -23,8 +23,10 @@ adapters/ (Claude Code hooks, …)
 packages/api   ──►  SQLite (VIVARIUM_DB_PATH)
         │  GET /v1/sessions, /v1/agents, /v1/sessions/:id
         ▲
-packages/web   ──►  Agent cards, replay (M2+)
+packages/web   ──►  Console UI (cards, steps, transcript — polls GET APIs)
 ```
+
+- **Web env** — `VITE_VIVARIUM_URL` / `VITE_VIVARIUM_TOKEN` ([packages/web/.env.example](packages/web/.env.example)); dev uses Vite proxy to `:8787`
 
 - **Schema** — `@vivarium/schema` (Zod): `session.start`, `session.turn`, `session.step`, `session.log`, `session.heartbeat`, `session.handoff`, `session.end`
 - **SDK** — `@vivarium/sdk` thin client for adapters
@@ -52,14 +54,22 @@ pnpm dev:api
 # http://127.0.0.1:8787/health
 ```
 
-Terminal B — web shell:
+Terminal B — web console:
 
 ```bash
 pnpm dev:web
-# http://127.0.0.1:5173
+# http://127.0.0.1:5173 — polls /v1/sessions & session detail
 ```
 
-Optional: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` (see [.env.example](.env.example)).
+Try it end-to-end:
+
+```bash
+# Terminal A: pnpm dev:api
+# Terminal B: pnpm dev:web
+pnpm dry-run:claude   # posts fixture session → refresh UI
+```
+
+Optional: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` on API; matching `VITE_VIVARIUM_TOKEN` on web (see [.env.example](.env.example) and [packages/web/.env.example](packages/web/.env.example)).
 
 ### Query persisted data
 

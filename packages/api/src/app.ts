@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { parseEventsBatch } from "@vivarium/schema";
 import type { EventStore } from "./store.js";
 
@@ -13,6 +14,14 @@ function authorize(c: { req: { header: (name: string) => string | undefined } })
 
 export function createApp(store: EventStore): Hono {
   const app = new Hono();
+
+  app.use(
+    "*",
+    cors({
+      origin: "*",
+      allowHeaders: ["Authorization", "Content-Type"],
+    }),
+  );
 
   app.get("/health", (c) =>
     c.json({ ok: true, service: "vivarium-api", version: API_VERSION, storage: "sqlite" }),
