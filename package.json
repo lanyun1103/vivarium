@@ -1,0 +1,19 @@
+{
+  "name": "vivarium",
+  "private": true,
+  "description": "Vivarium / 活体台 — harness-agnostic Agent lifecycle and chat observability",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm --filter @vivarium/schema build && pnpm -r run typecheck",
+    "dev:api": "pnpm --filter @vivarium/api dev",
+    "dev:web": "pnpm --filter @vivarium/web dev",
+    "validate": "pnpm --filter @vivarium/schema build && node --import tsx scripts/validate-plugins.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}

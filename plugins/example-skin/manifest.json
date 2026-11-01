@@ -1,0 +1,11 @@
+{
+  "id": "org.vivarium.example-skin",
+  "version": "0.1.0",
+  "name": "Example Pastel Skin",
+  "provides": ["theme", "emoji"],
+  "slots": {
+    "theme.default": "./theme.json",
+    "emoji.map": "./emoji-map.json"
+  },
+  "vivarium": ">=0.1.0"
+}

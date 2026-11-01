@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "session_id": "sess_01HFEXAMPLE",
+  "agent_id": "vivarium-demo",
+  "from_harness": "claude-code",
+  "to_harness": "grok-bot",
+  "transcript_ref": "tr_01HFEXAMPLE",
+  "task_digest": "Continue M0 scaffold: wire handoff CLI and validate schema.",
+  "task": "Scaffold Vivarium M0 monorepo and document handoff flow.",
+  "cwd_redacted": "~/src/vivarium",
+  "created_at": "2026-11-01T03:00:00Z"
+}
