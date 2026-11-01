@@ -55,4 +55,4 @@ pnpm dry-run:grok
 - Prefer redacted `cwd` (`~/project`); never send secrets in `content`.
 - Failures throw to stderr — wrap in your bot with try/catch if you need fail-soft (unlike Claude hooks).
 
-See [docs/adapters.md](../../docs/adapters.md).
+See [docs/adapters.md](../../docs/adapters.md) · [docs/plugins.md](../../docs/plugins.md) · [docs/handoff.md](../../docs/handoff.md).

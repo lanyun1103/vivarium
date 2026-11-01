@@ -119,3 +119,8 @@ pnpm smoke:claude
 ## Privacy
 
 Do not log API keys in hook commands. Keep tokens in `.claude/vivarium.env` (local, gitignored). See [event schema — redaction](../../docs/event-schema.md).
+
+## See also
+
+- [docs/adapters.md](../../docs/adapters.md) · [docs/handoff.md](../../docs/handoff.md)
+- [Repository README](../../README.md) · [CONTRIBUTING](../../CONTRIBUTING.md)

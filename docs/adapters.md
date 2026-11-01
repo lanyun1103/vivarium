@@ -59,3 +59,5 @@ The expected daemon JSON contract is documented in [adapters/paseo/README.md](..
 ## Privacy
 
 Redact paths and secrets before POST. Adapters should not send API keys or tokens in event payloads.
+
+See also [plugins.md](./plugins.md) · [handoff.md](./handoff.md) · [architecture.md](./architecture.md) · [event-schema.md](./event-schema.md).

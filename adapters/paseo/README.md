@@ -66,4 +66,4 @@ PASEO_DAEMON_URL=http://127.0.0.1:7741 PASEO_RUN_ID=abc \
 - **Streaming dialogue**: mapper sends one batch per sync; no continuous webhook yet.
 - **Duplicate turns** if you poll the same run repeatedly without idempotency on the server.
 
-See [docs/adapters.md](../../docs/adapters.md).
+See [docs/adapters.md](../../docs/adapters.md) · [docs/handoff.md](../../docs/handoff.md).

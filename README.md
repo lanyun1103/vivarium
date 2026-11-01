@@ -2,130 +2,103 @@
 
 **Harness-agnostic Agent lifecycle + chat observability.** Self-hosted. Cute UI. Plugin system inspired by DeepSeek Harness — *everything is a plugin*.
 
-活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
+Vivarium (活体台) collects `session.*` events from Claude Code, Grok Bot, Paseo, and other harnesses into **your** SQLite-backed API, then shows Agent cards, steps, transcript replay, and a **handoff** PoC in the web console.
 
-> **Status:** M4 — **Grok Bot + Paseo adapters** plus Claude Code hooks. See [adapters](docs/adapters.md).
-
-## Why
-
-| Problem | Vivarium direction |
-|--------|---------------------|
-| Each harness has its own logs and UI | Unified event schema + one dashboard |
-| Switching tools loses context | Handoff packages with `transcript_ref` |
-| Branding and delight are ad hoc | Theme, emoji, and avatar **plugins** with stable semantic keys |
-
-## Architecture
-
-```
-adapters/ (Claude Code hooks, …)
-        │  POST /v1/events
-        ▼
-packages/api   ──►  SQLite (VIVARIUM_DB_PATH)
-        │  GET /v1/sessions, /v1/agents, /v1/sessions/:id
-        ▲
-packages/web   ──►  Console UI (cards, steps, transcript — polls GET APIs)
-```
-
-- **Web env** — `VITE_VIVARIUM_URL` / `VITE_VIVARIUM_TOKEN` ([packages/web/.env.example](packages/web/.env.example)); dev uses Vite proxy to `:8787`
-
-- **Schema** — `@vivarium/schema` (Zod): `session.start`, `session.turn`, `session.step`, `session.log`, `session.heartbeat`, `session.handoff`, `session.end`
-- **SDK** — `@vivarium/sdk` thin client for adapters
-- **Storage** — [docs/storage.md](docs/storage.md) (D1 mapping notes)
-- **Plugins** — manifest + slots (`theme`, `emoji`, `avatar`, future `adapter`); see [docs/plugins.md](docs/plugins.md)
-
-Deep docs: [architecture](docs/architecture.md) · [event schema](docs/event-schema.md) · [adapters](docs/adapters.md) · [plugins](docs/plugins.md) · [roadmap](docs/roadmap.md)
+> **Open source:** [Apache-2.0](LICENSE) · Docs below · Milestones tracked in [roadmap](docs/roadmap.md).  
+> **Merge status:** Features land via stacked PRs (`M0`→`M5`); if you clone `main` before all PRs merge, check open PRs on [GitHub](https://github.com/lanyun1103/vivarium/pulls) for the latest adapters/plugins/handoff.
 
 ## Quick start
 
 **Requirements:** Node.js 20+, [pnpm](https://pnpm.io) 9+
 
 ```bash
+git clone https://github.com/lanyun1103/vivarium.git
+cd vivarium
 pnpm install
 pnpm typecheck
-pnpm build
-pnpm smoke:api
-pnpm smoke:claude   # API + adapter dry-run + restart readback
 ```
 
-Terminal A — API (SQLite under `./data/vivarium.db` by default):
+**Terminal A — API** (SQLite at `./data/vivarium.db` by default):
 
 ```bash
 pnpm dev:api
 # http://127.0.0.1:8787/health
 ```
 
-Terminal B — web console:
+**Terminal B — web console:**
 
 ```bash
 pnpm dev:web
-# http://127.0.0.1:5173 — polls /v1/sessions & session detail
+# http://127.0.0.1:5173
 ```
 
-Try it end-to-end:
+**Seed demo sessions** (no harness install required):
 
 ```bash
-# Terminal A: pnpm dev:api
-# Terminal B: pnpm dev:web
 pnpm dry-run:claude
 pnpm dry-run:grok
 pnpm dry-run:paseo
 ```
 
-Handoff: [docs/handoff.md](docs/handoff.md) — web **换马 / Handoff** button or `POST /v1/sessions/:id/handoff`.
+Optional env: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` ([.env.example](.env.example)); web: [packages/web/.env.example](packages/web/.env.example).
 
-### Skins / plugins (M3.6)
+## Architecture (one line)
 
-```bash
-pnpm dev:api & pnpm dev:web   # sync-plugins runs automatically
-# Top bar → Skin → "Mint Pop" or "Example Pastel"
+**Adapters** POST validated events → **API/SQLite** → **web UI** polls sessions, transcript, handoff, and plugin themes.
+
+```
+adapters/*  ──POST /v1/events──►  packages/api (SQLite)  ◄──GET──  packages/web
+plugins/*   ──manifest/slots───►  CSS + semantic emoji in web
 ```
 
-Add packs under `plugins/` — see [docs/plugins.md](docs/plugins.md).
+Details: [docs/architecture.md](docs/architecture.md) · [docs/storage.md](docs/storage.md) · [docs/event-schema.md](docs/event-schema.md)
 
-Optional: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` on API; matching `VITE_VIVARIUM_TOKEN` on web (see [.env.example](.env.example) and [packages/web/.env.example](packages/web/.env.example)).
+## Documentation
 
-### Query persisted data
+| Topic | Guide |
+|--------|--------|
+| **Adapters** (Claude, Grok, Paseo) | [docs/adapters.md](docs/adapters.md) |
+| **Plugins / skins** | [docs/plugins.md](docs/plugins.md) |
+| **Handoff** (换马) | [docs/handoff.md](docs/handoff.md) |
+| **Roadmap** | [docs/roadmap.md](docs/roadmap.md) |
+
+## Why
+
+| Problem | Vivarium direction |
+|--------|---------------------|
+| Each harness has its own logs and UI | Unified event schema + one dashboard |
+| Switching tools loses context | [Handoff](docs/handoff.md) packages + `session.handoff` |
+| Branding is ad hoc | [Plugin](docs/plugins.md) themes + semantic emoji keys |
+
+## Adapters at a glance
+
+| Harness | Dry-run | Doc |
+|---------|---------|-----|
+| Claude Code | `pnpm dry-run:claude` | [adapters/claude-code](adapters/claude-code/README.md) |
+| Grok Bot | `pnpm dry-run:grok` | [adapters/grok-bot](adapters/grok-bot/README.md) |
+| Paseo | `pnpm dry-run:paseo` | [adapters/paseo](adapters/paseo/README.md) |
+
+## Plugins & handoff in the UI
+
+- **Skins:** web top bar → **Skin** → Example Pastel / Mint Pop ([docs/plugins.md](docs/plugins.md))
+- **Handoff:** open a session → **换马 / Handoff** → download JSON ([docs/handoff.md](docs/handoff.md))
+
+## Verify / smoke
 
 ```bash
-curl -s http://127.0.0.1:8787/v1/sessions | jq
-curl -s http://127.0.0.1:8787/v1/agents | jq
-curl -s http://127.0.0.1:8787/v1/sessions/<session_id> | jq
+pnpm smoke:api
+pnpm smoke:handoff
 ```
 
-### Adapters (M2–M4)
+## Contributing & security
 
-| Harness | Dry-run |
-|---------|---------|
-| Claude Code | `pnpm dry-run:claude` |
-| Grok Bot | `pnpm dry-run:grok` |
-| Paseo | `pnpm dry-run:paseo` |
-
-Install/configure: [docs/adapters.md](docs/adapters.md) · [claude-code](adapters/claude-code/README.md) · [grok-bot](adapters/grok-bot/README.md) · [paseo](adapters/paseo/README.md)
-
-### Claude Code hooks (install)
-
-Install into your project (copy-paste):
-
-```bash
-./adapters/claude-code/install.sh --project "$(pwd)"
-# edit .claude/vivarium.env → VIVARIUM_URL (+ token if needed)
-pnpm dev:api
-```
-
-Dry-run without Claude Code: `pnpm dry-run:claude`. Full doc: [adapters/claude-code/README.md](adapters/claude-code/README.md).
-
-### Example plugin
-
-[plugins/example-skin/manifest.json](plugins/example-skin/manifest.json) demonstrates theme + emoji slot layout.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — local dev, new plugins, new adapters  
+- [SECURITY.md](SECURITY.md) — tokens, secrets in events, reporting issues  
 
 ## Privacy
 
-Do **not** send secrets to Vivarium. Redact absolute paths where possible (`$HOME` → `~`). See [docs/event-schema.md](docs/event-schema.md).
-
-## Contributing
-
-[CONTRIBUTING.md](CONTRIBUTING.md) — `pnpm typecheck`, `pnpm smoke:api`, and `pnpm smoke:claude` before adapter PRs.
+Do **not** send API keys or credentials in events. Redact paths where possible (`$HOME` → `~`). See [event schema — redaction](docs/event-schema.md).
 
 ## License
 
-[Apache-2.0](LICENSE)
+[Apache License 2.0](LICENSE) — Copyright Vivarium Contributors

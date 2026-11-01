@@ -69,3 +69,5 @@ Unload/revert on switch is handled by reloading the previous theme and clearing 
 ## Security
 
 Load **local/trusted** packs only. Do not fetch remote plugins without verification.
+
+See also [adapters.md](./adapters.md) · [handoff.md](./handoff.md) · [architecture.md](./architecture.md) · [CONTRIBUTING.md](../CONTRIBUTING.md).

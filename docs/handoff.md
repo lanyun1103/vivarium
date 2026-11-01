@@ -51,4 +51,4 @@ Gaps:
 pnpm smoke:handoff
 ```
 
-See also [event-schema.md](./event-schema.md) (`session.handoff`).
+See also [adapters.md](./adapters.md) · [plugins.md](./plugins.md) · [event-schema.md](./event-schema.md) (`session.handoff`) · [README](../README.md).
