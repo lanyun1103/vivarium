@@ -7,7 +7,9 @@
     "typecheck": "pnpm --filter @vivarium/schema build && pnpm -r run typecheck",
     "dev:api": "pnpm --filter @vivarium/api dev",
     "dev:web": "pnpm --filter @vivarium/web dev",
-    "validate": "pnpm --filter @vivarium/schema build && node --import tsx scripts/validate-plugins.ts"
+    "validate": "pnpm --filter @vivarium/schema build && node --import tsx scripts/validate-plugins.ts",
+    "smoke:api": "pnpm --filter @vivarium/api smoke",
+    "smoke:api-restart": "bash scripts/smoke-api-restart.sh"
   },
   "engines": {
     "node": ">=20"

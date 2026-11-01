@@ -4,8 +4,8 @@ Milestone overview for Vivarium / 活体台. Scope is intentionally incremental;
 
 | Milestone | Focus | Deliverables |
 |-----------|--------|--------------|
-| **M0** | Skeleton | Monorepo, schema, SDK stub, API stub, web shell, docs, example adapter + plugin *(this PR)* |
-| **M1** | Persistence | SQLite (local) + migration path to D1; list sessions API; basic Agent list in UI |
+| **M0** | Skeleton | Monorepo, schema, SDK stub, API stub, web shell, docs, example adapter + plugin ✅ |
+| **M1** | Persistence | SQLite storage, query APIs, smoke tests, [D1 mapping doc](./storage.md) ✅ |
 | **M2** | Live cards | WebSocket or SSE; running state, current step, log tail; plugin theme loader |
 | **M3** | Transcript replay | Turn timeline, tool call chips, search; emoji plugin resolution |
 | **M4** | Handoff | Server-side transcript_ref, export/import package, CLI to resume on second harness |

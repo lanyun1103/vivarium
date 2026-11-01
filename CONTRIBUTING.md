@@ -15,8 +15,9 @@ pnpm build
 Run stubs locally:
 
 ```bash
-pnpm dev:api   # ingest API on http://127.0.0.1:8787
+pnpm dev:api   # ingest + SQLite on http://127.0.0.1:8787
 pnpm dev:web   # placeholder UI on http://127.0.0.1:5173
+pnpm smoke:api # persistence smoke test (no server required)
 ```
 
 ## Project layout
