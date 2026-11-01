@@ -81,6 +81,8 @@ Request or record a harness switch with packaged context.
 | `transcript_ref` | string | Server-side pointer or hash |
 | `task_digest` | string | Short summary for the target harness |
 
+**Handoff package** (HTTP `POST /v1/sessions/:id/handoff`) may also include optional `turns[]` and `resume_prompt` for manual resume — see [handoff.md](./handoff.md).
+
 See `examples/handoff-package.json` for a portable snapshot shape.
 
 ## `session.end`

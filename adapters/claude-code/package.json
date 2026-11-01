@@ -7,7 +7,8 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dry-run": "tsx tools/dry-run.ts",
-    "post-events": "tsx tools/post-events.ts"
+    "post-events": "tsx tools/post-events.ts",
+    "test:transcript": "tsx tools/test-parse-transcript.ts"
   },
   "dependencies": {
     "@vivarium/schema": "workspace:*",

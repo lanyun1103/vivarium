@@ -19,6 +19,7 @@ pnpm dev:api   # ingest + SQLite on http://127.0.0.1:8787
 pnpm dev:web   # placeholder UI on http://127.0.0.1:5173
 pnpm smoke:api # persistence smoke test (no server required)
 pnpm smoke:claude # Claude adapter + API + SQLite restart readback
+pnpm smoke:handoff # handoff package API smoke
 pnpm dry-run:claude # fixture POST without Claude Code
 ```
 

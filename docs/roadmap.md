@@ -8,6 +8,7 @@ Milestone overview for Vivarium / 活体台. Scope is intentionally incremental;
 | **M1** | Persistence | SQLite storage, query APIs, smoke tests, [D1 mapping doc](./storage.md) ✅ |
 | **M2** | Claude Code adapter | Installable SessionStart/End + turn hooks, dry-run, smoke, fail-soft ✅ |
 | **M3** | Web console | Agent/session cards, steps + transcript replay, polling UI, theme CSS vars ✅ |
+| **M3.5** | Transcript + handoff PoC | JSONL ingest (Claude Code), `POST …/handoff`, web 换马 button ✅ |
 | **M4** | Live + plugins | WebSocket/SSE live tail; example-skin loader in web |
 | **M5** | Transcript depth | Tool call chips, search; emoji plugin resolution |
 | **M6** | Handoff + adapters | Handoff CLI; Grok/Paseo sketches; OIDC, retention |

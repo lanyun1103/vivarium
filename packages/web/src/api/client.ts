@@ -1,4 +1,4 @@
-import type { AgentsResponse, SessionDetail, SessionsResponse } from "./types";
+import type { AgentsResponse, HandoffResponse, SessionDetail, SessionsResponse } from "./types";
 
 const baseUrl = (import.meta.env.VITE_VIVARIUM_URL as string | undefined)?.replace(/\/$/, "") ?? "";
 const token = import.meta.env.VITE_VIVARIUM_TOKEN as string | undefined;
@@ -36,4 +36,21 @@ export async function fetchSessionDetail(sessionId: string): Promise<SessionDeta
 
 export async function fetchHealth(): Promise<{ ok: boolean }> {
   return getJson("/health");
+}
+
+export async function createHandoff(
+  sessionId: string,
+  toHarness: string,
+  maxTurns = 20,
+): Promise<HandoffResponse> {
+  const res = await fetch(`${baseUrl}/v1/sessions/${encodeURIComponent(sessionId)}/handoff`, {
+    method: "POST",
+    headers: { ...headers(), "Content-Type": "application/json" },
+    body: JSON.stringify({ to_harness: toHarness, max_turns: maxTurns }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`handoff → ${res.status}${text ? `: ${text}` : ""}`);
+  }
+  return res.json() as Promise<HandoffResponse>;
 }
