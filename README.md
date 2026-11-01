@@ -4,7 +4,7 @@
 
 活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
 
-> **Status:** M0 skeleton — schemas, SDK, API stub, placeholder UI, docs, and example adapter/plugin. Not a production observability stack yet; see [roadmap](docs/roadmap.md).
+> **Status:** M1 — events persist in **SQLite**; query APIs list sessions/agents and return transcript slices. Web UI is still a placeholder; see [roadmap](docs/roadmap.md).
 
 ## Why
 
@@ -14,19 +14,21 @@
 | Switching tools loses context | Handoff packages with `transcript_ref` |
 | Branding and delight are ad hoc | Theme, emoji, and avatar **plugins** with stable semantic keys |
 
-## Architecture (M0)
+## Architecture
 
 ```
 adapters/ (Claude Code hooks, …)
         │  POST /v1/events
         ▼
-packages/api   ──►  (M1: SQLite / D1)
+packages/api   ──►  SQLite (VIVARIUM_DB_PATH)
+        │  GET /v1/sessions, /v1/agents, /v1/sessions/:id
         ▲
 packages/web   ──►  Agent cards, replay (M2+)
 ```
 
 - **Schema** — `@vivarium/schema` (Zod): `session.start`, `session.turn`, `session.step`, `session.log`, `session.heartbeat`, `session.handoff`, `session.end`
 - **SDK** — `@vivarium/sdk` thin client for adapters
+- **Storage** — [docs/storage.md](docs/storage.md) (D1 mapping notes)
 - **Plugins** — manifest + slots (`theme`, `emoji`, `avatar`, future `adapter`); see [docs/plugins.md](docs/plugins.md)
 
 Deep docs: [architecture](docs/architecture.md) · [event schema](docs/event-schema.md) · [plugins](docs/plugins.md) · [roadmap](docs/roadmap.md)
@@ -39,9 +41,10 @@ Deep docs: [architecture](docs/architecture.md) · [event schema](docs/event-sch
 pnpm install
 pnpm typecheck
 pnpm build
+pnpm smoke:api
 ```
 
-Terminal A — API stub (in-memory):
+Terminal A — API (SQLite under `./data/vivarium.db` by default):
 
 ```bash
 pnpm dev:api
@@ -55,7 +58,15 @@ pnpm dev:web
 # http://127.0.0.1:5173
 ```
 
-Optional auth: set `VIVARIUM_TOKEN` on the API and the same value in adapter env (see [.env.example](.env.example)).
+Optional: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` (see [.env.example](.env.example)).
+
+### Query persisted data
+
+```bash
+curl -s http://127.0.0.1:8787/v1/sessions | jq
+curl -s http://127.0.0.1:8787/v1/agents | jq
+curl -s http://127.0.0.1:8787/v1/sessions/<session_id> | jq
+```
 
 ### Claude Code hooks
 
@@ -71,7 +82,7 @@ Do **not** send secrets to Vivarium. Redact absolute paths where possible (`$HOM
 
 ## Contributing
 
-[CONTRIBUTING.md](CONTRIBUTING.md) — `pnpm typecheck` before PRs.
+[CONTRIBUTING.md](CONTRIBUTING.md) — `pnpm typecheck` and `pnpm smoke:api` before PRs.
 
 ## License
 

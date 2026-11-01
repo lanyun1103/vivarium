@@ -8,5 +8,6 @@ dist/
 *.local
 coverage/
 .vite/
+data/
 *.db
 *.sqlite

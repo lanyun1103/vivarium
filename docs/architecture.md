@@ -16,7 +16,7 @@ flowchart LR
   end
   subgraph vivarium [Vivarium server]
     API[Ingest API]
-    STORE[(Session store)]
+    STORE[(SQLite / D1)]
     WEB[Web UI]
   end
   CC --> H
@@ -26,22 +26,24 @@ flowchart LR
   WEB --> API
 ```
 
-## Components (M0)
+## Components
 
 | Layer | Role |
 |-------|------|
 | **Schema** (`@vivarium/schema`) | Canonical event + transcript + handoff types (Zod). |
 | **SDK** (`@vivarium/sdk`) | Small client: authenticate, batch POST events. |
-| **API** (`@vivarium/api`) | Stub ingest + health; M1+ persists to SQLite or Cloudflare D1. |
-| **Web** (`@vivarium/web`) | Vite + React shell; M1+ live cards and replay. |
+| **API** (`@vivarium/api`) | Ingest + query API; **M1:** SQLite persistence (`sessions`, `events`). |
+| **Web** (`@vivarium/web`) | Vite + React shell; M2+ live cards and replay. |
 | **Plugins** | Manifest + slots (theme, emoji, avatar, future adapters). Unload rolls back side effects. |
 | **Adapters** | Harness-specific hooks that map local session data to schema events. |
+
+Storage details: [storage.md](./storage.md).
 
 ## Session model
 
 - One **session** = one Agent run tied to `agent_id` (stable for the card) and `session_id` (this run).
-- Events are append-only on the server (M0 accepts and logs; persistence TBD).
-- **Transcript** is derived from `session.turn` events (and tool metadata when present).
+- Events are **append-only** in SQLite (`events` table); session metadata is denormalized in `sessions`.
+- **Transcript** is derived from `session.turn` events ordered by event `id` (and `session.step` merged by `step_id` for current step view).
 
 ## Privacy
 
@@ -59,10 +61,10 @@ Inspired by DeepSeek Harness “everything is a plugin”:
 
 See [plugins.md](./plugins.md).
 
-## Deployment notes (future)
+## Deployment notes
 
-- **Single binary / Docker**: API + static web assets.
-- **Edge**: D1 for events, R2 for large transcript blobs, Workers for API.
-- **Local dev**: SQLite file next to API process.
+- **Local dev**: SQLite file (`VIVARIUM_DB_PATH`, default `./data/vivarium.db`).
+- **Single binary / Docker**: API + static web assets; mount a volume for `data/`.
+- **Edge (future)**: D1 for the same tables; R2 for large transcript blobs; Workers for API.
 
-M0 does not implement persistence; see [roadmap.md](./roadmap.md).
+See [roadmap.md](./roadmap.md) for milestone status.
