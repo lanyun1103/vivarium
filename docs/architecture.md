@@ -33,7 +33,7 @@ flowchart LR
 | **Schema** (`@vivarium/schema`) | Canonical event + transcript + handoff types (Zod). |
 | **SDK** (`@vivarium/sdk`) | Small client: authenticate, batch POST events. |
 | **API** (`@vivarium/api`) | Ingest + query API; **M1:** SQLite persistence (`sessions`, `events`). |
-| **Web** (`@vivarium/web`) | Vite + React shell; M2+ live cards and replay. |
+| **Web** (`@vivarium/web`) | React console: session cards, steps timeline, transcript replay (M3 polling UI). Theme via CSS variables (`src/theme/skin.ts`, aligned with example-skin). |
 | **Plugins** | Manifest + slots (theme, emoji, avatar, future adapters). Unload rolls back side effects. |
 | **Adapters** | Claude Code hooks (M2); more harnesses later. |
 
