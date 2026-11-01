@@ -7,10 +7,10 @@ import {
 } from "./api/client";
 import type { AgentSummary, SessionDetail, SessionSummary } from "./api/types";
 import { EmptyState } from "./components/EmptyState";
+import { PluginPicker } from "./components/PluginPicker";
 import { SessionCard, SessionDetailPanel } from "./components/SessionViews";
 import { usePoll } from "./hooks/usePoll";
 import { liveStatus } from "./lib/sessionUi";
-import { applyThemeVariables, defaultTheme } from "./theme/skin";
 
 const POLL_MS = 4000;
 
@@ -20,10 +20,6 @@ type Dashboard = {
 };
 
 export function App() {
-  useEffect(() => {
-    applyThemeVariables(defaultTheme);
-  }, []);
-
   const loadDashboard = useCallback(async (): Promise<Dashboard> => {
     const [sessionsRes, agentsRes] = await Promise.all([fetchSessions(50), fetchAgents(50)]);
     return { sessions: sessionsRes.sessions, agents: agentsRes.agents };
@@ -110,6 +106,7 @@ export function App() {
           <p className="subtitle">活体台 · Agent observatory</p>
         </div>
         <div className="topbar__meta">
+          <PluginPicker />
           <span className="pill">{apiBaseLabel()}</span>
           <button type="button" className="btn-ghost" onClick={() => void refresh()}>
             Refresh

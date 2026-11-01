@@ -1,0 +1,14 @@
+{
+  "agent.happy": "./assets/happy.svg",
+  "agent.thinking": "./assets/thinking.svg",
+  "agent.blocked": "./assets/blocked.svg",
+  "agent.idle": "./assets/idle.svg",
+  "agent.running": "./assets/running.svg",
+  "agent.stalled": "./assets/stalled.svg",
+  "agent.success": "./assets/success.svg",
+  "status.running": "./assets/running.svg",
+  "status.stalled": "./assets/stalled.svg",
+  "status.idle": "./assets/idle.svg",
+  "step.running": "./assets/step-running.svg",
+  "step.done": "./assets/step-done.svg"
+}

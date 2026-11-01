@@ -6,7 +6,9 @@
     "accent": "#7c6cf6",
     "accentSoft": "#ebe8ff",
     "text": "#1f1633",
-    "muted": "#6b6280"
+    "muted": "#6b6280",
+    "ok": "#3cb371",
+    "warn": "#e8a838"
   },
   "radius": {
     "card": "16px",
