@@ -4,7 +4,7 @@
 
 活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
 
-> **Status:** M1 — events persist in **SQLite**; query APIs list sessions/agents and return transcript slices. Web UI is still a placeholder; see [roadmap](docs/roadmap.md).
+> **Status:** M2 — **Claude Code hooks PoC** report `session.start` / turns / `session.end` into SQLite; web UI still a placeholder. See [roadmap](docs/roadmap.md).
 
 ## Why
 
@@ -42,6 +42,7 @@ pnpm install
 pnpm typecheck
 pnpm build
 pnpm smoke:api
+pnpm smoke:claude   # API + adapter dry-run + restart readback
 ```
 
 Terminal A — API (SQLite under `./data/vivarium.db` by default):
@@ -68,9 +69,17 @@ curl -s http://127.0.0.1:8787/v1/agents | jq
 curl -s http://127.0.0.1:8787/v1/sessions/<session_id> | jq
 ```
 
-### Claude Code hooks
+### Claude Code hooks (M2)
 
-See [adapters/claude-code/README.md](adapters/claude-code/README.md). Set `VIVARIUM_URL` and optionally `VIVARIUM_TOKEN`, then wire `SessionStart` / `SessionStop` to the provided shell scripts.
+Install into your project (copy-paste):
+
+```bash
+./adapters/claude-code/install.sh --project "$(pwd)"
+# edit .claude/vivarium.env → VIVARIUM_URL (+ token if needed)
+pnpm dev:api
+```
+
+Dry-run without Claude Code: `pnpm dry-run:claude`. Full doc: [adapters/claude-code/README.md](adapters/claude-code/README.md).
 
 ### Example plugin
 
@@ -82,7 +91,7 @@ Do **not** send secrets to Vivarium. Redact absolute paths where possible (`$HOM
 
 ## Contributing
 
-[CONTRIBUTING.md](CONTRIBUTING.md) — `pnpm typecheck` and `pnpm smoke:api` before PRs.
+[CONTRIBUTING.md](CONTRIBUTING.md) — `pnpm typecheck`, `pnpm smoke:api`, and `pnpm smoke:claude` before adapter PRs.
 
 ## License
 

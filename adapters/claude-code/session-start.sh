@@ -1,23 +1,16 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +e
+set -u
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
 
-session_id="${CLAUDE_SESSION_ID:-${PPID}-$(date +%s)}"
-agent_id="${VIVARIUM_AGENT_ID:-claude-code-local}"
-cwd="${PWD}"
-if [[ -n "${HOME:-}" ]]; then
-  cwd="${cwd/#$HOME/~}"
+if [[ -f "${CLAUDE_PROJECT_DIR:-}/.claude/vivarium.env" ]]; then
+  vivarium_load_env "${CLAUDE_PROJECT_DIR}/.claude/vivarium.env"
+elif [[ -f "${HOME}/.claude/vivarium.env" ]]; then
+  vivarium_load_env "${HOME}/.claude/vivarium.env"
 fi
 
-task="${VIVARIUM_TASK:-Claude Code session}"
-host="$(hostname -s 2>/dev/null || echo unknown)"
-model="${VIVARIUM_MODEL:-unknown}"
-now="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-
-payload="[
-  {\"type\":\"session.start\",\"session_id\":\"${session_id}\",\"at\":\"${now}\",\"agent_id\":\"${agent_id}\",\"harness\":\"claude-code\",\"model\":\"${model}\",\"cwd\":\"${cwd}\",\"task\":\"${task}\",\"host\":\"${host}\"},
-  {\"type\":\"session.log\",\"session_id\":\"${session_id}\",\"at\":\"${now}\",\"level\":\"info\",\"message\":\"SessionStart hook fired\"}
-]"
-
-"${SCRIPT_DIR}/post-event.sh" "${payload}"
+vivarium_run_hook SessionStart
+exit 0

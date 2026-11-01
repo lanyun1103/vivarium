@@ -35,7 +35,7 @@ flowchart LR
 | **API** (`@vivarium/api`) | Ingest + query API; **M1:** SQLite persistence (`sessions`, `events`). |
 | **Web** (`@vivarium/web`) | Vite + React shell; M2+ live cards and replay. |
 | **Plugins** | Manifest + slots (theme, emoji, avatar, future adapters). Unload rolls back side effects. |
-| **Adapters** | Harness-specific hooks that map local session data to schema events. |
+| **Adapters** | Claude Code hooks (M2); more harnesses later. |
 
 Storage details: [storage.md](./storage.md).
 
