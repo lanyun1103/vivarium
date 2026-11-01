@@ -1,10 +1,8 @@
 # Contributing to Vivarium / 活体台
 
-Thank you for your interest in contributing!
+Thanks for helping improve Vivarium. This is a **pnpm monorepo** (Node 20+, pnpm 9+).
 
-## Development setup
-
-Requirements: **Node.js 20+**, **pnpm 9+**.
+## Run locally
 
 ```bash
 pnpm install
@@ -12,34 +10,62 @@ pnpm typecheck
 pnpm build
 ```
 
-Run stubs locally:
+Daily loop:
 
 ```bash
-pnpm dev:api   # ingest + SQLite on http://127.0.0.1:8787
-pnpm dev:web   # placeholder UI on http://127.0.0.1:5173
-pnpm smoke:api # persistence smoke test (no server required)
+pnpm dev:api    # :8787 — SQLite ingest
+pnpm dev:web    # :5173 — console (syncs plugins to public/)
 ```
 
-## Project layout
+Useful checks:
 
-- `packages/schema` — shared Zod types for events, transcripts, handoff
-- `packages/sdk` — thin HTTP client for adapters and harness hooks
-- `packages/api` — self-hosted ingest server (M0: in-memory stub; see docs for SQLite/D1)
-- `packages/web` — React UI shell (M0: placeholder Agent card)
-- `adapters/` — harness hook examples (e.g. Claude Code)
-- `plugins/` — theme, emoji, avatar manifests
+```bash
+pnpm validate          # plugin manifests
+pnpm dry-run:claude
+pnpm dry-run:grok
+pnpm dry-run:paseo
+pnpm smoke:api
+pnpm smoke:handoff
+```
+
+Environment variables: `VIVARIUM_URL`, `VIVARIUM_TOKEN` — see [.env.example](.env.example) and [docs/adapters.md](docs/adapters.md).
 
 ## Pull requests
 
-1. Fork and create a branch from `main`.
-2. Keep changes focused; update docs when behavior or contracts change.
+1. Branch from `main` (or the current milestone stack if coordinating with maintainers).
+2. Keep PRs focused; update docs when behavior or contracts change.
 3. Run `pnpm typecheck` before opening a PR.
-4. Do **not** commit secrets, tokens, or real absolute paths from your machine.
+4. Never commit secrets, real tokens, or private absolute paths.
 
-## Privacy and telemetry
+## Add a plugin pack
 
-Adapters must redact secrets and avoid sending raw home-directory paths when possible. See [docs/architecture.md](./docs/architecture.md).
+1. Copy `plugins/example-skin/` → `plugins/your-skin/`.
+2. Edit `manifest.json`, `theme.json`, `emoji-map.json` (semantic keys — see [docs/plugins.md](docs/plugins.md)).
+3. Register the pack in `PLUGIN_CATALOG` (`packages/web/src/plugins/host.ts`).
+4. Run `pnpm validate` and `pnpm dev:web` to preview in the **Skin** picker.
+
+## Add an adapter
+
+1. Add a workspace package under `adapters/your-harness/` (see `adapters/grok-bot` or `adapters/paseo`).
+2. Use `@vivarium/sdk` + `@vivarium/schema`; POST to `/v1/events`.
+3. Provide a `dry-run` script and README; wire `pnpm dry-run:your-harness` in root `package.json` if appropriate.
+4. Document env vars in [docs/adapters.md](docs/adapters.md).
+
+## Layout
+
+| Path | Purpose |
+|------|---------|
+| `packages/schema` | Zod event + handoff + plugin types |
+| `packages/sdk` | HTTP client for adapters |
+| `packages/api` | SQLite ingest + query + handoff |
+| `packages/web` | Console UI + plugin host |
+| `adapters/` | Harness ingest |
+| `plugins/` | Theme/emoji packs |
+
+## Privacy
+
+Adapters must redact secrets and avoid raw home-directory paths. See [SECURITY.md](SECURITY.md) and [docs/architecture.md](docs/architecture.md).
 
 ## Code of conduct
 
-Be kind, constructive, and respectful. We follow standard open-source community norms.
+Be kind and constructive. Standard open-source community norms apply.

@@ -123,6 +123,10 @@ export const handoffPackage = z.object({
   task: z.string().optional(),
   cwd_redacted: z.string().optional(),
   created_at: isoDateTime,
+  /** Last N turns included for PoC manual resume (optional). */
+  turns: z.array(transcriptTurn).optional(),
+  /** Plain-text block to paste into the target harness. */
+  resume_prompt: z.string().optional(),
 });
 
 export type HandoffPackage = z.infer<typeof handoffPackage>;
@@ -139,6 +143,65 @@ export const pluginManifest = z.object({
 });
 
 export type PluginManifest = z.infer<typeof pluginManifest>;
+
+/** Stable semantic keys — UI never hardcodes asset paths; plugins map keys → URLs. */
+export const semanticEmojiKey = z.enum([
+  "agent.happy",
+  "agent.thinking",
+  "agent.blocked",
+  "agent.idle",
+  "agent.running",
+  "agent.stalled",
+  "agent.success",
+  "status.running",
+  "status.stalled",
+  "status.idle",
+  "step.running",
+  "step.done",
+]);
+
+export type SemanticEmojiKey = z.infer<typeof semanticEmojiKey>;
+
+export const recommendedEmojiKeys: SemanticEmojiKey[] = [
+  "agent.happy",
+  "agent.thinking",
+  "agent.blocked",
+  "agent.idle",
+  "agent.running",
+  "agent.stalled",
+  "agent.success",
+  "status.running",
+  "status.stalled",
+  "status.idle",
+  "step.running",
+  "step.done",
+];
+
+export const themeSlot = z.object({
+  id: z.string(),
+  colors: z.object({
+    bg: z.string(),
+    card: z.string(),
+    accent: z.string(),
+    accentSoft: z.string(),
+    text: z.string(),
+    muted: z.string(),
+    ok: z.string().optional(),
+    warn: z.string().optional(),
+  }),
+  radius: z.object({ card: z.string(), chip: z.string().optional() }).optional(),
+});
+
+export type ThemeSlot = z.infer<typeof themeSlot>;
+
+/** Emoji slot: semantic key → relative asset path (resolved by host). */
+export const emojiMapSlot = z.record(z.string());
+
+export type EmojiMapSlot = z.infer<typeof emojiMapSlot>;
+
+export function parsePluginManifest(input: unknown): PluginManifest {
+  return pluginManifest.parse(input);
+}
 
 export function parseEvent(input: unknown): VivariumEvent {
   return vivariumEvent.parse(input);

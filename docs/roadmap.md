@@ -6,11 +6,17 @@ Milestone overview for Vivarium / 活体台. Scope is intentionally incremental;
 |-----------|--------|--------------|
 | **M0** | Skeleton | Monorepo, schema, SDK stub, API stub, web shell, docs, example adapter + plugin ✅ |
 | **M1** | Persistence | SQLite storage, query APIs, smoke tests, [D1 mapping doc](./storage.md) ✅ |
-| **M2** | Live cards | WebSocket or SSE; running state, current step, log tail; plugin theme loader |
-| **M3** | Transcript replay | Turn timeline, tool call chips, search; emoji plugin resolution |
-| **M4** | Handoff | Server-side transcript_ref, export/import package, CLI to resume on second harness |
-| **M5** | Adapters | First-party hooks: Claude Code, Cursor/Grok Bot sketch, Paseo community adapter template |
-| **M6** | Hardening | Auth (OIDC/API keys), multi-tenant, retention policies, signed plugins |
+| **M2** | Claude Code adapter | Installable SessionStart/End + turn hooks, dry-run, smoke, fail-soft ✅ |
+| **M3** | Web console | Agent/session cards, steps + transcript replay, polling UI, theme CSS vars ✅ |
+| **M3.5** | Transcript + handoff PoC | JSONL ingest (Claude Code), `POST …/handoff`, web 换马 button ✅ |
+| **M3.6** | Plugin host | Local skin/emoji packs, semantic keys, web skin picker ✅ |
+| **M4** | Multi-harness adapters | Grok Bot CLI ingest, Paseo snapshot mapper + dry-run ✅ |
+| **M5** | OSS polish | LICENSE, README, CONTRIBUTING, SECURITY, GitHub templates ✅ |
+| **M6** | Live + ops | WebSocket/SSE; OIDC; retention; optional integrations (see below) |
+
+## Product notes (not committed code)
+
+- **TickTick / 滴答清单 migration:** A possible future integration for task sync has **not** been evaluated or implemented in this repository. Any decision to connect Vivarium to external task systems belongs in product planning, not M5/M6 code drops.
 
 ## Non-goals (for now)
 
@@ -20,4 +26,8 @@ Milestone overview for Vivarium / 活体台. Scope is intentionally incremental;
 
 ## How to help
 
-Pick a milestone issue (once filed) or propose a narrow PR against the current milestone. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+Pick a milestone issue or propose a narrow PR against `main`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## Related docs
+
+- [Adapters](./adapters.md) · [Plugins](./plugins.md) · [Handoff](./handoff.md) · [Architecture](./architecture.md)

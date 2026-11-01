@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node scripts/sync-plugins.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/sync-plugins.mjs",
     "build": "tsc -p tsconfig.json --noEmit && vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vivarium/schema": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

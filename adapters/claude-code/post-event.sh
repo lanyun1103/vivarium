@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set +e
+set -u
+
+# Legacy curl helper — prefer tools/hook-run.ts (schema validation).
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/common.sh
+source "${SCRIPT_DIR}/lib/common.sh"
+
+payload="${1:-[]}"
 
 if [[ -z "${VIVARIUM_URL:-}" ]]; then
-  echo "VIVARIUM_URL is required" >&2
-  exit 1
+  exit 0
 fi
 
-payload="${1:?JSON events array required}"
-
-auth=()
-if [[ -n "${VIVARIUM_TOKEN:-}" ]]; then
-  auth=(-H "Authorization: Bearer ${VIVARIUM_TOKEN}")
-fi
-
-curl -fsS -X POST "${VIVARIUM_URL}/v1/events" \
-  -H "Content-Type: application/json" \
-  "${auth[@]}" \
-  -d "{\"events\": ${payload}}"
+tsx_bin="$(vivarium_tsx)" || exit 0
+"${tsx_bin}" "${SCRIPT_DIR}/tools/post-events-cli.ts" --soft --events "${payload}" 2>/dev/null || exit 0
+exit 0

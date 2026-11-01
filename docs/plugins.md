@@ -1,67 +1,73 @@
-# Plugins
+# Plugins (M3.6 host)
 
-Vivarium plugins follow a **manifest + slots** model inspired by DeepSeek Harness (DSH): themes, emoji packs, Agent avatars, and (later) harness adapters are all plugins with the same loader contract.
+Vivarium plugins use a **DSH-style manifest + slots** model. The web console loads packs from `plugins/` (copied to `packages/web/public/plugins` on dev/build).
 
 ## Manifest
 
 ```json
 {
-  "id": "com.example.skin",
-  "version": "1.0.0",
-  "name": "Example Skin",
-  "provides": ["theme", "emoji"],
+  "id": "org.vivarium.example-skin",
+  "version": "0.1.0",
+  "name": "Example Pastel Skin",
+  "provides": ["theme", "emoji", "avatar"],
   "slots": {
     "theme.default": "./theme.json",
-    "emoji.map": "./emoji-map.json"
+    "emoji.map": "./emoji-map.json",
+    "avatar.default": "./assets/avatar-default.svg"
   },
-  "vivarium": ">=0.1.0"
+  "vivarium": ">=0.3.6"
 }
 ```
 
 | Field | Description |
 |-------|-------------|
-| `id` | Unique plugin id (reverse-DNS recommended) |
+| `id` | Unique plugin id (reverse-DNS) |
 | `version` | Semver |
-| `provides` | One or more of: `theme`, `emoji`, `avatar`, `adapter` |
-| `slots` | Map of slot name → asset path relative to manifest |
-| `vivarium` | Optional compatible host version range |
+| `provides` | `theme`, `emoji`, `avatar`, (future) `adapter` |
+| `slots` | Slot name → path relative to manifest directory |
 
-## Slot types
+Validate locally: `pnpm validate`
 
-### `theme`
+## Semantic emoji keys
 
-JSON object: colors, radii, fonts, card chrome. Web UI merges into CSS variables on load.
+The UI **never** hardcodes PNG/SVG paths. It asks the active plugin for stable keys defined in `@vivarium/schema`:
 
-### `emoji`
+`agent.happy`, `agent.thinking`, `agent.blocked`, `agent.idle`, `agent.running`, `agent.stalled`, `agent.success`, `status.*`, `step.*`
 
-**Stable semantic keys** → image URLs or bundled paths (like `dsh-emoji`):
+Your `emoji-map.json` maps each key to `./assets/...`. Missing keys fall back to Unicode glyphs (fail-soft).
 
-```json
-{
-  "agent.thinking": "./assets/thinking.png",
-  "agent.success": "./assets/success.png",
-  "step.running": "./assets/step-run.png"
-}
-```
+## Web plugin host
 
-UI resolves `agent.thinking` regardless of which skin is active.
+1. Picker loads catalog entry (`packages/web/src/plugins/host.ts`).
+2. Fetches `manifest.json`, theme slot, emoji map (optional avatar slot).
+3. Applies CSS variables via `applyThemeVariables`.
+4. `SemanticIcon` resolves `agent.running` → plugin asset URL.
 
-### `avatar`
+**ZIP packs:** not loaded in M3.6 — unzip into `plugins/your-pack/` with the same layout as `example-skin`. Registry/signatures planned later.
 
-Maps `agent_id` patterns or default avatar assets for Agent cards.
+## Add a new pack
 
-### `adapter` (future)
+1. Copy `plugins/example-skin/` → `plugins/my-skin/`.
+2. Edit `manifest.json` (`id`, `name`, `slots`).
+3. Tune `theme.json` colors + replace SVGs under `assets/`.
+4. Map all recommended keys in `emoji-map.json`.
+5. Register in `PLUGIN_CATALOG` inside `packages/web/src/plugins/host.ts`.
+6. Run `pnpm validate` and `pnpm dev:web` (runs `sync-plugins`).
 
-Registers harness-specific ingest shims; unload must detach hooks.
+Shipped examples:
 
-## Lifecycle
+| Pack | Id | Look |
+|------|-----|------|
+| Default | `builtin:default` | Built-in pastel CSS (no assets) |
+| Example Pastel | `org.vivarium.example-skin` | Purple tint + SVG expressions |
+| Mint Pop | `org.vivarium.mint-skin` | Green tint + SVG expressions |
 
-1. **load(manifest)** — validate semver and `provides`.
-2. **activate** — register slot contributions.
-3. **unload** — run cleanup, revert theme/emoji overrides, remove listeners.
+## Lifecycle (future)
 
-M0 ships `plugins/example-skin` as a reference manifest only; the web host loader lands in M2.
+Unload/revert on switch is handled by reloading the previous theme and clearing emoji URLs. Full plugin host runtime (adapters, signed ZIP) is out of scope for M3.6.
 
 ## Security
 
-Plugins are **local or trusted registry** only in early milestones. Do not auto-fetch remote plugins without signature verification (planned M4+).
+Load **local/trusted** packs only. Do not fetch remote plugins without verification.
+
+See also [adapters.md](./adapters.md) · [handoff.md](./handoff.md) · [architecture.md](./architecture.md) · [CONTRIBUTING.md](../CONTRIBUTING.md).

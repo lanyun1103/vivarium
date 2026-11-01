@@ -1,69 +1,126 @@
-# Claude Code adapter (M0)
+# Claude Code adapter (M2 PoC)
 
-Send Vivarium events from [Claude Code](https://docs.anthropic.com/en/docs/claude-code) lifecycle hooks.
+Report Vivarium [`session.*`](../../docs/event-schema.md) events from [Claude Code](https://code.claude.com/docs/en/hooks) hooks into your self-hosted API (SQLite from M1).
 
-## Environment
+## What you get
+
+| Hook | Vivarium events | Notes |
+|------|-----------------|-------|
+| **SessionStart** | `session.start`, `session.log` | Uses hook JSON (`session_id`, `model`, `session_title`, `cwd`) |
+| **SessionEnd** | `session.end` | Maps Claude `reason` → outcome |
+| **UserPromptSubmit** *(optional, async)* | `session.turn` (`role: user`) | Redacted + truncated prompts |
+| **Stop** *(optional, async)* | `session.turn` (`role: assistant`) | Uses `last_assistant_message` only |
+
+Hooks **always exit 0** and **fail soft** if Vivarium is down — your Claude session must never break.
+
+## Limitations (read before prod use)
+
+- **Transcript JSONL (M3.5)**: on **SessionEnd**, we best-effort parse `transcript_path` JSONL (`VIVARIUM_TRANSCRIPT_MAX_LINES`, default 400). May **duplicate** turns already sent via UserPromptSubmit/Stop.
+- **Partial coverage**: tool blocks become `[tool:name]` text; no full argument payloads. Missing file → hooks-only transcript.
+- **Stop hook skips** when `stop_hook_active` is true (continuations).
+- Requires **Node + tsx** from the Vivarium repo (`pnpm install` once at repo root).
+- Set `VIVARIUM_SKIP_TRANSCRIPT=1` to disable JSONL ingest.
+
+Env: `VIVARIUM_TRANSCRIPT_MAX_LINES`, `VIVARIUM_SKIP_TRANSCRIPT`, `VIVARIUM_MAX_TURN_CHARS`.
+
+## One-time: Vivarium server
+
+```bash
+cd /path/to/vivarium
+pnpm install
+pnpm dev:api   # http://127.0.0.1:8787 — SQLite under ./data/vivarium.db
+```
+
+Optional auth: set `VIVARIUM_TOKEN` on the API and in `.claude/vivarium.env`.
+
+## Install hooks (copy-paste)
+
+From your **project** directory (where you run Claude Code):
+
+```bash
+/path/to/vivarium/adapters/claude-code/install.sh --project "$(pwd)"
+```
+
+This writes:
+
+| Path | Purpose |
+|------|---------|
+| `.claude/vivarium.env` | `VIVARIUM_URL`, optional `VIVARIUM_TOKEN` (gitignore this file) |
+| `.claude/vivarium.env.example` | Safe template to commit |
+| `.claude/hooks/vivarium/*.sh` | Wrappers → Vivarium adapter scripts |
+| `.claude/settings.local.json` | Merged `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop` hooks |
+
+Edit `.claude/vivarium.env`:
+
+```bash
+VIVARIUM_URL=http://127.0.0.1:8787
+# VIVARIUM_TOKEN=your-token-if-api-requires-it
+```
+
+Restart Claude Code in that project. Run `/hooks` inside Claude Code to confirm Vivarium hooks are listed.
+
+### Manual settings (if you skip `install.sh`)
+
+Use [`templates/settings.local.fragment.json`](./templates/settings.local.fragment.json). Hook commands must be executable and point at `.claude/hooks/vivarium/…` wrappers (or absolute paths to this adapter).
+
+Official hook names: **`SessionStart`**, **`SessionEnd`**, **`UserPromptSubmit`**, **`Stop`** — there is no `SessionStop` event.
+
+### User-wide hooks
+
+```bash
+./install.sh --project "$(pwd)" --user
+```
+
+Copy the generated hooks block into `~/.claude/settings.json`, adjusting paths to your Vivarium checkout.
+
+## Environment variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `VIVARIUM_URL` | yes | Base URL of your Vivarium API (no trailing slash), e.g. `http://127.0.0.1:8787` |
-| `VIVARIUM_TOKEN` | no | Bearer token if the API sets `VIVARIUM_TOKEN` |
+| `VIVARIUM_URL` | yes | API base URL, no trailing slash |
+| `VIVARIUM_TOKEN` | no | Bearer token when API enforces auth |
+| `VIVARIUM_AGENT_ID` | no | Override Agent card id (default: `claude-code:<project-folder>`) |
+| `VIVARIUM_MAX_TURN_CHARS` | no | Max turn body size (default `8000`) |
+| `VIVARIUM_TASK` | no | Fallback task string if Claude sends no `session_title` |
+| `VIVARIUM_SOFT_FAIL` | no | Default soft-fail; set `0` to surface errors in CLI tools only |
 
-Never commit real tokens. Use your shell profile or Claude Code hook env config locally.
+Claude Code also sets `CLAUDE_PROJECT_DIR`, `CLAUDE_ENV_FILE`, etc. See [hooks reference](https://code.claude.com/docs/en/hooks).
 
-## Hook wiring
+## Dry-run (no Claude Code)
 
-Claude Code supports hooks such as `SessionStart` and `SessionStop`. Point them at the scripts in this folder (adjust paths to your clone).
-
-Example `.claude/settings.json` fragment:
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/absolute/path/to/vivarium/adapters/claude-code/session-start.sh"
-          }
-        ]
-      }
-    ],
-    "SessionStop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/absolute/path/to/vivarium/adapters/claude-code/session-stop.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Replace `/absolute/path/to/vivarium` with your checkout. Prefer workspace-relative task text; scripts redact `$HOME` in `cwd`.
-
-## Scripts
-
-- `session-start.sh` — posts `session.start` + initial `session.log`
-- `session-stop.sh` — posts `session.end`
-- `post-event.sh` — shared curl helper
-
-## Manual test
+Posts a fixture `start → turns → end` session:
 
 ```bash
 export VIVARIUM_URL=http://127.0.0.1:8787
-./post-event.sh '[{"type":"session.start","session_id":"test-1","agent_id":"local","harness":"claude-code","model":"unknown","cwd":"~/project","task":"hook test","host":"dev"}]'
+pnpm dry-run:claude
+# or from repo root:
+pnpm --filter @vivarium/adapter-claude-code dry-run
 ```
 
-Then open `GET $VIVARIUM_URL/v1/sessions` (with `Authorization: Bearer $VIVARIUM_TOKEN` if configured).
+Query:
+
+```bash
+curl -s "$VIVARIUM_URL/v1/sessions" | jq
+curl -s "$VIVARIUM_URL/v1/sessions/<session_id>" | jq
+```
+
+Full persistence smoke (API + SQLite + dry-run + restart):
+
+```bash
+pnpm smoke:claude
+```
+
+## Implementation notes
+
+- Shell hooks delegate to TypeScript [`tools/hook-run.ts`](./tools/hook-run.ts) via `tsx`.
+- Payloads are validated with `@vivarium/schema` before POST.
+- Path redaction: `$HOME` → `~`, `/Users/*` and `/home/*` masked; common secret patterns stripped from text fields.
 
 ## Privacy
 
-- Do not embed API keys in hook commands.
-- Avoid posting full filesystem paths; scripts map `$HOME` to `~`.
+Do not log API keys in hook commands. Keep tokens in `.claude/vivarium.env` (local, gitignored). See [event schema — redaction](../../docs/event-schema.md).
+
+## See also
+
+- [docs/adapters.md](../../docs/adapters.md) · [docs/handoff.md](../../docs/handoff.md)
+- [Repository README](../../README.md) · [CONTRIBUTING](../../CONTRIBUTING.md)

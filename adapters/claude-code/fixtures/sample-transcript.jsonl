@@ -1,0 +1,3 @@
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Fix the handoff smoke test"}]},"timestamp":"2026-11-01T06:00:00Z","sessionId":"fixture-session"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"I'll add the API route and web button."}]},"timestamp":"2026-11-01T06:00:05Z","sessionId":"fixture-session"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_1","name":"Read","input":{"path":"README.md"}}]},"timestamp":"2026-11-01T06:00:06Z","sessionId":"fixture-session"}
