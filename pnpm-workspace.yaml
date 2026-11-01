@@ -1,3 +1,5 @@
 packages:
   - "packages/*"
   - "adapters/claude-code"
+  - "adapters/grok-bot"
+  - "adapters/paseo"

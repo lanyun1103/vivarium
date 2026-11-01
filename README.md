@@ -4,7 +4,7 @@
 
 活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
 
-> **Status:** M3.6 — **plugin host** loads local skin/emoji packs with semantic agent icons + skin picker. See [plugins](docs/plugins.md).
+> **Status:** M4 — **Grok Bot + Paseo adapters** plus Claude Code hooks. See [adapters](docs/adapters.md).
 
 ## Why
 
@@ -33,7 +33,7 @@ packages/web   ──►  Console UI (cards, steps, transcript — polls GET API
 - **Storage** — [docs/storage.md](docs/storage.md) (D1 mapping notes)
 - **Plugins** — manifest + slots (`theme`, `emoji`, `avatar`, future `adapter`); see [docs/plugins.md](docs/plugins.md)
 
-Deep docs: [architecture](docs/architecture.md) · [event schema](docs/event-schema.md) · [plugins](docs/plugins.md) · [roadmap](docs/roadmap.md)
+Deep docs: [architecture](docs/architecture.md) · [event schema](docs/event-schema.md) · [adapters](docs/adapters.md) · [plugins](docs/plugins.md) · [roadmap](docs/roadmap.md)
 
 ## Quick start
 
@@ -66,8 +66,9 @@ Try it end-to-end:
 ```bash
 # Terminal A: pnpm dev:api
 # Terminal B: pnpm dev:web
-pnpm dry-run:claude   # posts fixture session → refresh UI
-pnpm smoke:handoff  # handoff package from dry-run session
+pnpm dry-run:claude
+pnpm dry-run:grok
+pnpm dry-run:paseo
 ```
 
 Handoff: [docs/handoff.md](docs/handoff.md) — web **换马 / Handoff** button or `POST /v1/sessions/:id/handoff`.
@@ -91,7 +92,17 @@ curl -s http://127.0.0.1:8787/v1/agents | jq
 curl -s http://127.0.0.1:8787/v1/sessions/<session_id> | jq
 ```
 
-### Claude Code hooks (M2)
+### Adapters (M2–M4)
+
+| Harness | Dry-run |
+|---------|---------|
+| Claude Code | `pnpm dry-run:claude` |
+| Grok Bot | `pnpm dry-run:grok` |
+| Paseo | `pnpm dry-run:paseo` |
+
+Install/configure: [docs/adapters.md](docs/adapters.md) · [claude-code](adapters/claude-code/README.md) · [grok-bot](adapters/grok-bot/README.md) · [paseo](adapters/paseo/README.md)
+
+### Claude Code hooks (install)
 
 Install into your project (copy-paste):
 

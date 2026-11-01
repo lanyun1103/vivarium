@@ -1,0 +1,22 @@
+{
+  "name": "@vivarium/adapter-grok-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Grok Bot / Temporal-style CLI ingest for Vivarium",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dry-run": "tsx tools/dry-run.ts",
+    "report": "tsx tools/cli.ts"
+  },
+  "dependencies": {
+    "@vivarium/schema": "workspace:*",
+    "@vivarium/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "license": "Apache-2.0"
+}
