@@ -1,0 +1,12 @@
+{
+  "id": "org.vivarium.mint-skin",
+  "version": "0.1.0",
+  "name": "Mint Pop Skin",
+  "provides": ["theme", "emoji", "avatar"],
+  "slots": {
+    "theme.default": "./theme.json",
+    "emoji.map": "./emoji-map.json",
+    "avatar.default": "./assets/avatar-default.svg"
+  },
+  "vivarium": ">=0.3.6"
+}

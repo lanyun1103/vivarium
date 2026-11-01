@@ -253,6 +253,51 @@ code {
   }
 }
 
+.session-card__semantic {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+}
+
+.semantic-icon {
+  width: 2rem;
+  height: 2rem;
+  display: inline-block;
+}
+
+.semantic-icon--glyph {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.plugin-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.plugin-picker__label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.65rem;
+  color: var(--v-muted);
+  gap: 0.15rem;
+}
+
+.plugin-picker__select {
+  font-size: 0.8rem;
+  border: 1px solid var(--v-accent-soft);
+  border-radius: 8px;
+  padding: 0.25rem 0.4rem;
+  background: var(--v-card);
+  color: var(--v-text);
+}
+
+.plugin-picker__error {
+  color: var(--v-warn);
+  cursor: help;
+}
+
 .session-card__avatar {
   font-size: 1.75rem;
   width: 2.75rem;

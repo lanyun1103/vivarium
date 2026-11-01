@@ -10,4 +10,5 @@ coverage/
 .vite/
 data/
 *.db
+packages/web/public/plugins/
 *.sqlite

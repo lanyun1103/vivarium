@@ -1,7 +1,9 @@
 import type { SessionDetail, SessionSummary } from "../api/types";
-import { currentStepLabel, formatRelative, harnessEmoji, liveStatus, statusEmoji } from "../lib/sessionUi";
+import { currentStepLabel, formatRelative, harnessEmoji, liveStatus } from "../lib/sessionUi";
 import { HandoffPanel } from "./HandoffPanel";
 import { FlowStrip, StepsTimeline } from "./FlowAndSteps";
+import { SemanticIcon } from "./SemanticIcon";
+import { liveStatusToSemantic } from "../plugins/semantic";
 import { TranscriptReplay } from "./TranscriptReplay";
 
 type CardProps = {
@@ -26,7 +28,7 @@ export function SessionCard({ session, detail, selected, onSelect }: CardProps) 
       onClick={onSelect}
     >
       <div className="session-card__avatar" aria-hidden>
-        {statusEmoji(status)}
+        <SemanticIcon semanticKey={liveStatusToSemantic(status)} className="session-card__semantic" />
       </div>
       <div className="session-card__body">
         <div className="session-card__row">

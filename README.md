@@ -4,7 +4,7 @@
 
 活体台 (Vivarium) watches your Agents from the outside: hooks and adapters report session metadata and full chat transcripts to a server you control. The web UI shows Agent cards — running state, current step, standard flow, historical logs, and transcript replay. **One-click handoff** packages context so the same conversation can continue on another harness (Claude Code ↔ Grok Bot ↔ Paseo, and more).
 
-> **Status:** M3.5 — richer transcript ingest (Claude JSONL) + **handoff PoC** (API + web 换马). See [roadmap](docs/roadmap.md) · [handoff](docs/handoff.md).
+> **Status:** M3.6 — **plugin host** loads local skin/emoji packs with semantic agent icons + skin picker. See [plugins](docs/plugins.md).
 
 ## Why
 
@@ -71,6 +71,15 @@ pnpm smoke:handoff  # handoff package from dry-run session
 ```
 
 Handoff: [docs/handoff.md](docs/handoff.md) — web **换马 / Handoff** button or `POST /v1/sessions/:id/handoff`.
+
+### Skins / plugins (M3.6)
+
+```bash
+pnpm dev:api & pnpm dev:web   # sync-plugins runs automatically
+# Top bar → Skin → "Mint Pop" or "Example Pastel"
+```
+
+Add packs under `plugins/` — see [docs/plugins.md](docs/plugins.md).
 
 Optional: `VIVARIUM_DB_PATH`, `VIVARIUM_TOKEN` on API; matching `VITE_VIVARIUM_TOKEN` on web (see [.env.example](.env.example) and [packages/web/.env.example](packages/web/.env.example)).
 
