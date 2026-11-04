@@ -11,11 +11,12 @@ type CardProps = {
   detail?: SessionDetail;
   selected: boolean;
   onSelect: () => void;
+  kicker?: string;
 };
 
-export function SessionCard({ session, detail, selected, onSelect }: CardProps) {
+export function SessionCard({ session, detail, selected, onSelect, kicker }: CardProps) {
   const status = liveStatus(session);
-  const agent = session.agent_id ?? session.session_id.slice(0, 8);
+  const title = session.task?.trim() || session.session_id;
   const step = currentStepLabel(detail?.steps);
   const hasTurns = (detail?.turns.length ?? 0) > 0;
   const hasSteps = (detail?.steps.length ?? 0) > 0;
@@ -31,8 +32,9 @@ export function SessionCard({ session, detail, selected, onSelect }: CardProps) 
         <SemanticIcon semanticKey={liveStatusToSemantic(status)} className="session-card__semantic" />
       </div>
       <div className="session-card__body">
+        {kicker && <p className="session-card__kicker">{kicker}</p>}
         <div className="session-card__row">
-          <h2 className="session-card__title">{agent}</h2>
+          <h2 className="session-card__title">{title}</h2>
           <span className={`badge badge--${status}`}>{status}</span>
         </div>
         <p className="session-card__meta">
@@ -40,9 +42,10 @@ export function SessionCard({ session, detail, selected, onSelect }: CardProps) 
           <span>·</span>
           <span>{session.model ?? "model ?"}</span>
           <span>·</span>
+          <span>{session.session_id}</span>
+          <span>·</span>
           <span>{formatRelative(session.updated_at)}</span>
         </p>
-        <p className="session-card__task">{session.task ?? "No task summary"}</p>
         <p className="session-card__step">
           <span className="label">Step</span> {step}
         </p>
@@ -56,9 +59,10 @@ type DetailProps = {
   detail: SessionDetail | null;
   loading: boolean;
   onClose: () => void;
+  agentName?: string;
 };
 
-export function SessionDetailPanel({ detail, loading, onClose }: DetailProps) {
+export function SessionDetailPanel({ detail, loading, onClose, agentName }: DetailProps) {
   if (loading && !detail) {
     return (
       <aside className="detail-panel">
@@ -81,10 +85,16 @@ export function SessionDetailPanel({ detail, loading, onClose }: DetailProps) {
     <aside className="detail-panel">
       <header className="detail-panel__head">
         <div>
-          <h2>{s.agent_id ?? s.session_id}</h2>
+          <h2>{s.task?.trim() || agentName || s.session_id}</h2>
           <p className="muted">
-            {s.harness} · {s.model} · {status}
+            {agentName ?? s.agent_id} · {s.harness} · {s.model} · {status}
           </p>
+          {s.route_reason && (
+            <p className="muted">
+              路由 {s.route_source ?? "?"} · {s.route_reason}
+              {s.agent_locked ? " · 已锁定" : ""}
+            </p>
+          )}
         </div>
         <button type="button" className="btn-ghost" onClick={onClose}>
           Close

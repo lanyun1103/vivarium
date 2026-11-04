@@ -36,18 +36,39 @@ Append-only log of every ingested event.
 | `payload` | Full JSON event (schema-validated at ingest) |
 | `received_at` | Server insert time |
 
+### `agents` (M7)
+
+One row per product line. Seeded lines include `inbox` (待分拣), `tianyan`, `company`, `reverse`, `feishu-monitor`, and `grok-product`. `INSERT OR IGNORE` keeps later edits to display name.
+
+| Column | Description |
+|--------|-------------|
+| `agent_id` | Slug, primary key (`inbox`, `tianyan`, …) |
+| `display_name`, `line` | Label and line slug |
+| `avatar` | Emoji, path, or URL. Empty is fine. |
+| `archived` | `1` hides the line from the default list and from routing |
+| `description` | Short copy for the card |
+| `policy_json` | Plugin-shaped policy: aliases, cwd hints, summary style, nudge / handoff copy |
+| `created_at`, `updated_at` | ISO timestamps |
+
+`sessions.agent_id` points at one of these rows after routing. Added columns: `reported_agent_id`, `route_confidence`, `route_source`, `route_reason`, `agent_locked`. Legacy harness-scoped ids (`claude-code:dry-run`) are copied into `reported_agent_id` and the session is moved to `inbox`.
+
 ### `schema_migrations`
 
-Single-row version tracker (`version = 1` for M1). Future migrations bump this and run `ALTER` / new tables in code.
+Version tracker. `1` is the M1 event log. `2` adds product-line agents. Migrations only `ALTER` / add tables.
 
 ## Query API
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/v1/sessions?limit=50` | Recent sessions (metadata) |
-| `GET` | `/v1/agents?limit=50` | Recent agents (latest session per `agent_id`) |
-| `GET` | `/v1/sessions/:sessionId` | Session + **steps** (latest per `step_id`) + **turns** (ordered transcript) |
-| `POST` | `/v1/events` | Batch ingest (unchanged contract) |
+| `GET` | `/v1/sessions?limit=50&agent_id=` | Recent sessions. Optional product-line filter. |
+| `GET` | `/v1/agents?limit=50&include_archived=1` | Product lines (not harness ids), with running counts |
+| `POST` | `/v1/agents` | Create a line (`agent_id`, `display_name`, optional `policy`) |
+| `GET` | `/v1/agents/:agentId` | Line, policy, and its sessions |
+| `PATCH` | `/v1/agents/:agentId` | Rename, avatar, archive, or replace policy fields. `inbox` cannot be archived. |
+| `POST` | `/v1/sessions/:sessionId/reassign` | Brain move onto a line and lock it against the next ingest |
+| `POST` | `/v1/brain/suggest` | `{ agent_id }` or `{ session_id }` → progress text + suggestions. Nothing is sent. |
+| `GET` | `/v1/sessions/:sessionId` | Session + **steps** + **turns** |
+| `POST` | `/v1/events` | Batch ingest. `session.start` is routed; the stored event payload is unchanged. |
 
 ## Cloudflare D1 (later)
 

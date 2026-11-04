@@ -32,18 +32,29 @@ flowchart LR
 |-------|------|
 | **Schema** (`@vivarium/schema`) | Canonical event + transcript + handoff types (Zod). |
 | **SDK** (`@vivarium/sdk`) | Small client: authenticate, batch POST events. |
-| **API** (`@vivarium/api`) | Ingest + query API; **M1:** SQLite persistence (`sessions`, `events`). |
-| **Web** (`@vivarium/web`) | React console: session cards, steps timeline, transcript replay (M3 polling UI). Theme via CSS variables (`src/theme/skin.ts`, aligned with example-skin). |
+| **API** (`@vivarium/api`) | Ingest + query. **M7:** `agents` table, light router on `session.start`, `POST /v1/brain/suggest`. |
+| **Web** (`@vivarium/web`) | React console. Home is product-line cards; a line drills into sessions, steps, and transcript. |
 | **Plugins** | Manifest + slots (theme, emoji, avatar, future adapters). Unload rolls back side effects. |
 | **Adapters** | Claude Code hooks (M2); more harnesses later. |
 
 Storage details: [storage.md](./storage.md).
 
+## Product model
+
+- **Agent** = a lasting product line (天眼 `tianyan`, 公司 `company`, 待分拣 `inbox`, …). Not a chat, and not a harness.
+- **Session** = one harness run. It always hangs under a real `agent_id`. The same line can have many sessions on many harnesses.
+- The id an adapter sends on `session.start` is a **hint** (`reported_agent_id`). Values like `claude-code:dry-run` are not product lines.
+- A **light router** classifies that hint plus cwd / `#tags` / task keywords once at ingest. Low confidence goes to `inbox`.
+- The **brain** reads a line later: progress in plain language, and suggestions (`reassign` | `nudge` | `summary` | `handoff`). It does not call the harness.
+
+See [routing.md](./routing.md).
+
 ## Session model
 
-- One **session** = one Agent run tied to `agent_id` (stable for the card) and `session_id` (this run).
-- Events are **append-only** in SQLite (`events` table); session metadata is denormalized in `sessions`.
+- Events are **append-only** in SQLite (`events` table). The stored payload keeps the adapter’s original `agent_id`.
+- Session metadata is denormalized in `sessions`, including the routed product-line id.
 - **Transcript** is derived from `session.turn` events ordered by event `id` (and `session.step` merged by `step_id` for current step view).
+- The web home lists **product lines**. A line opens onto its sessions. Flat “all sessions” is a secondary filter.
 
 ## Privacy
 

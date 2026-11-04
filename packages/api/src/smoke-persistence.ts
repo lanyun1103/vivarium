@@ -63,15 +63,15 @@ const events: VivariumEvent[] = [
 const dir = mkdtempSync(join(tmpdir(), "vivarium-smoke-"));
 const dbPath = join(dir, "test.db");
 
-try {
+async function main(): Promise<void> {
   {
     const store = openStore(dbPath);
-    store.insertEvents(events);
+    await store.insertEvents(events);
     store.close();
   }
 
   const store2 = openStore(dbPath);
-  const sessions = store2.listSessions(10);
+  const sessions = store2.listSessions({ limit: 10 });
   if (!sessions.some((s) => s.session_id === sessionId)) {
     throw new Error("session not listed after reopen");
   }
@@ -86,13 +86,29 @@ try {
   if (detail.session.outcome !== "success") {
     throw new Error("expected outcome success");
   }
-  const agents = store2.listAgents(10);
-  if (!agents.some((a) => a.agent_id === "smoke-agent")) {
-    throw new Error("agent not listed");
+  if (detail.session.agent_id !== "inbox") {
+    throw new Error(`expected unmatched session on inbox, got ${detail.session.agent_id}`);
+  }
+  if (detail.session.reported_agent_id !== "smoke-agent") {
+    throw new Error("expected reported agent_id preserved");
+  }
+  const agents = store2.listAgents({ limit: 20 });
+  if (!agents.some((a) => a.agent_id === "inbox" && a.display_name === "待分拣")) {
+    throw new Error("inbox product line missing");
+  }
+  if (agents.some((a) => a.agent_id === "smoke-agent")) {
+    throw new Error("harness-scoped id must not become a product line");
   }
   store2.close();
 
   console.log("smoke-persistence: OK", sessionId);
-} finally {
-  rmSync(dir, { recursive: true, force: true });
 }
+
+main()
+  .catch((err) => {
+    console.error(err);
+    process.exitCode = 1;
+  })
+  .finally(() => {
+    rmSync(dir, { recursive: true, force: true });
+  });
